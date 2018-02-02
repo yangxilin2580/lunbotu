@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>无缝滚动轮播图</title>
+	<style>
+		*{margin:0;padding:0;}
+		li{list-style:none;}
+		#zhuti{
+			width:1000px;
+			margin:100px auto;
+			margin-top:50px;
+			position:relative;
+			overflow:hidden;
+		}
+		#zhuti ul{
+			width:8000px;
+		}
+		#zhuti li{
+			width:1000px;
+			float:left;
+		}
+		#prev,#next{
+			position:absolute;
+			top:190px;
+			cursor:pointer;
+			transition:3s;
+			opacity:0.6;
+		}
+		#prev:hover,#next:hover{
+			opacity:1;
+			transform:scale(1.1);
+		}
+		#prev{
+			left:20px;
+		}
+		#next{
+			right:20px;
+		}
+		#dian{
+			position: absolute;
+        	bottom:25px;
+        	left:45%;
+		}
+		#dian span{
+			display:block;
+        	width:16px;
+        	height:16px;
+        	border-radius:50%;
+        	float:left;
+        	margin-right:8px;
+        	cursor:pointer;
+        	background-color:#FFF;
+        	/*font-size:0;*/
+		}
+		#dian .focus{
+        	background-color:yellow;
+      	}
+	</style>
+</head>
+<body>
+	<div id="zhuti">
+		<ul style="margin-left:0;">
+			<li><img src="images/1.jpg" alt=""></li>
+			<li><img src="images/2.jpg" alt=""></li>
+			<li><img src="images/3.jpg" alt=""></li>
+			<li><img src="images/4.jpg" alt=""></li>
+			<li><img src="images/5.jpg" alt=""></li>
+			<li><img src="images/6.jpg" alt=""></li>		
+		</ul>
+		<div id="dian"></div>
+		<img id="prev" src="images/l.png" alt="">
+		<img id="next" src="images/r.png" alt="">
+</div>
+	<script>
+		var prev=document.getElementById('prev')
+		var next=document.getElementById("next")
+		var zhuti=document.getElementById("zhuti")
+		var ul=document.getElementById('zhuti').getElementsByTagName('ul')[0]
+		var liList=ul.getElementsByTagName("li")
+		var dianList = document.getElementById("dian");
+		var	n=0;  /*代表当前图片位置*/
+		var m=0;   //小圆点跟随事件
+		var count = liList.length;
+		var minionclick = false;  //模拟点击事件
+        var isAnimation= false;   //解决多次点击按钮，动画飞出去
+		next.onclick=function(){
+			if(!isAnimation){
+				n++;
+			// 正常情况：
+				if(n<count){
+				m++;    
+				animation("next")
+				}
+				if(n == count){
+					newLi=liList[0].cloneNode(true)
+					ul.appendChild(newLi)
+					m=0;  
+					animation("next")
+				}
+			}
+		}
+		prev.onclick=function(){
+        	if(!isAnimation){
+        	n--;
+        // 正常情况：
+        		if(n!==-1){
+        			m--;
+        			animation("prev")
+        		}
+        		else{
+        			n=0;
+        			newLi = liList[liList.length-1].cloneNode(true); //克隆最后一张
+        			ul.insertBefore(newLi,ul.firstChild)  //插入到第一个子元素的前面
+        			ul.style.marginLeft="-1000px"
+        			animation("prev")
+        			m = count-1;
+        			minionclick= true;
+        		}
+        	}
+       	}
+        function animation(dir){
+        	exchengdian()  //小圆点颜色跟随图片换
+            var t1=setInterval(function(){
+            	isAnimation = true;
+       			ml=parseInt(ul.style.marginLeft)
+       			if(dir=="next"){
+       				ul.style.marginLeft=ml + (Math.floor((n*(-1000) - ml) / 12)) + "px"
+       			}
+       			if(dir == "prev"){
+              	ul.style.marginLeft = ml + (Math.ceil((n*(-1000) - ml) / 12)) + "px"
+            }
+				if(ml == n*-1000){
+					 if(n == count){ //此处必须要用一个变量来代替length,因length的值现在变成了7，但此时count仍是6
+						ul.style.marginLeft = "0px";  //ul瞬间到达真实的第一张去
+						ul.removeChild(newLi);  //移除临时li
+						n = 0;        //将n校准到正确的位置上
+					}	
+					if(minionclick){
+                	ul.style.marginLeft = (-(count - 1) * 1000) + "px"; //ul瞬间到达真实的第一张去
+                	ul.removeChild(newLi);  //移除临时li
+                	n = count - 1; //将n校准到正确的位置上
+                	minionclick = false;
+					}
+					clearInterval(t1) 
+					isAnimation = false; 
+				}	     
+			},16)
+        }
+        //自动播放
+        var autoPlay = setInterval(function(){
+        	next.onclick()
+        },3000)
+        //智能判断
+        zhuti.onmouseenter = function(){
+        	clearInterval(autoPlay)
+        }
+        zhuti.onmouseleave = function(){
+          	autoPlay = setInterval(function(){
+            	next.onclick()
+          	},3000)
+        }
+       //生成小圆点事件：
+       	for(i=0;i<count;i++){
+       		var newSpan=document.createElement("span")
+       		dianList.appendChild(newSpan)
+       		newSpan.setAttribute("xiabiao",i) //相当于font-size:0;但浏览器都认识
+        }
+        var spanList = dianList.getElementsByTagName("span");
+        spanList[0].className = "focus";
+//小圆点颜色跟随图片换
+       	function exchengdian(){
+        	for(var i = 0; i < count; i++){
+            	spanList[i].className = ""
+        	}
+          		spanList[m].className = "focus";
+        }
+        // // 枚举小圆点：
+        // for(var i = 0; i < count;i++){
+        // //绑定点击事件
+        // 	spanList[i].innerHTML=i;
+        // 	spanList[i].onclick = function(){
+        // 		m=Number(this.innerHTML)
+        // 		for(i=0;i<count;i++){
+        // 			spanList[i].className = "";
+        // 		}
+        //     	spanList[m].className = "focus";
+        // 	}
+        // }
+        	for(var i = 0; i < count;i++){
+        //绑定点击事件
+        	// spanList[i].innerHTML=i;  //不能加它
+        	spanList[i].onclick = function(){
+        		if(n<this.getAttribute("xiabiao")){
+        			n=this.getAttribute("xiabiao") //更新变量状态
+        			m=n     
+        			animation("next")
+        		}
+        		if(n>this.getAttribute("xiabiao")){
+        			n=this.getAttribute("xiabiao")  //更新变量状态
+        			m=n
+        			animation("prev")
+        		}
+        	}
+        }
+	</script>
+</body>
+</html>

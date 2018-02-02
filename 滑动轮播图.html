@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>滑动轮播图</title>
+	<style>
+		*{margin:0;padding:0;}
+		li{list-style:none;}
+	#zhuti{
+		width:1000px;
+		margin:100px auto;
+		margin-top:50px;
+		position:relative;
+		overflow:hidden;
+	}
+	#zhuti ul{
+		width:6000px;
+	}
+	#zhuti li{
+		float:left;
+		width:1000px;
+	}
+	/*.zhuti .show{
+		display:block;
+	}*/
+	#prev,#next{
+		position:absolute;
+		top:190px;
+		cursor:pointer;
+		transition:3s;
+		opacity:0.6;
+	}
+	#prev{
+		left:20px;
+	}
+	#next{
+		right:20px;
+	}
+	#prev:hover,#next:hover{
+		opacity:1;
+		transform:scale(1.1);
+	}
+	#dian{
+		position:absolute;
+		bottom:20px;
+		left:45%;
+	}
+	#dian .focus{
+		background-color:yellow;
+	}
+	#dian span{
+		display:inline-block;
+		height:16px;
+		width:16px;
+		border-radius:50%;
+		font-size:0;
+		cursor:pointer;
+		background-color:#fff;
+	}
+	</style>
+</head>
+<body>
+	<div id="zhuti">
+		<ul style="margin-left:0">
+			<li><img src="images/1.jpg" alt=""></li>
+			<li><img src="images/2.jpg" alt=""></li>
+			<li><img src="images/3.jpg" alt=""></li>
+			<li><img src="images/4.jpg" alt=""></li>
+			<li><img src="images/5.jpg" alt=""></li>
+			<li><img src="images/6.jpg" alt=""></li>
+		</ul>
+		<img  id="prev"src="images/l.png"alt="">
+		<img  id="next"src="images/r.png" alt="">
+			<div id="dian"><span class="focus">0</span>
+				<span>1</span>
+				<span>2</span>
+				<span>3</span>
+				<span>4</span>
+				<span>5</span>
+			</div>
+	</div>		
+	<script>
+	var next=document.getElementById('next')
+	var prev=document.getElementById("prev")
+	var ul = document.getElementById("zhuti").getElementsByTagName("ul")[0];
+    var liList = ul.getElementsByTagName("li")
+    var zhuti=document.getElementById("zhuti")
+    var dianlist=document.getElementsByTagName("span")
+    		// console.log(liList)
+    		var n=0;
+    	function toNext(){
+       		// 下一张图片的实现：
+       			// n是当前图片数
+       			n++
+       			if(n<liList.length){
+       				// 正常情况：
+       				var t1=setInterval(function(){
+       				// ml表示marginleft的数值
+       					var ml=parseInt(ul.style.marginLeft)
+       					if (ml!==-(n*1000 )){
+       					ul.style.marginLeft=ml-40+"px"
+       					// ul.style.marginLeft=ml-Math.ceil((far-ml)/10)+"px"
+       					// ul.style.marginLeft=ml+Math.floor((-(n*1000)-ml)/10)+"px"
+       						dianlist[n].className = "focus";
+     						dianlist[n-1].className = "";
+       					}
+       					else{
+       						clearInterval(t1)
+       					}
+       				},20)
+       			}
+       			else{
+       				n=0
+       				var t2=setInterval(function(){
+       					var ml=parseInt(ul.style.marginLeft)
+       					if(ml==-(liList.length-1)*1000){
+       						ul.style.marginLeft=0
+       						dianlist[n].className = "focus";
+     						dianlist[5].className = "";
+       					}
+       					else{
+       						clearInterval(t2)
+       					}
+       				},20)
+       			}
+       		}
+
+  		next.onclick = function(){
+     		toNext()
+   		}
+       		// 上一张图片的实现：
+       		prev.onclick=function(){
+       			// n是当前图片数
+       			n--
+       			if(n!==-1){
+       				// 正常情况：
+       				var t3=setInterval(function(){
+       					var ml=parseInt(ul.style.marginLeft)
+       					if(ml!==-(n*1000)){
+       					ul.style.marginLeft=ml+40+"px"
+       					// ul.style.marginLeft=ml+Math.ceil((far-ml)/10)+"px"
+       					// ul.style.marginLeft=ml+Math.floor((-(n*1000)-ml)/10)+"px"
+       						dianlist[n].className = "focus";
+     						dianlist[n+1].className = "";
+       					}
+       					else{
+       						clearInterval(t3)
+       					}
+       				},20)
+       			}
+       			else{
+       				n=liList.length-1
+       				var t4=setInterval(function(){
+       					var ml=parseInt(ul.style.marginLeft)
+       					if(ml!==-(n*1000)){
+       						ul.style.marginLeft=-((liList.length-1)*1000)+"px"
+       						dianlist[n].className = "focus";
+     						dianlist[0].className = "";
+       					}
+       						
+       					else{
+       						clearInterval(t4)
+       					}
+       				},20)
+       			}
+       		}
+	
+        autoPlay = setInterval(function(){
+       		toNext()
+       	},3000)
+       		zhuti.onmouseenter = function(){
+        		clearInterval(autoPlay)
+        	// console.log("123456789")
+        	}
+        	zhuti.onmouseleave = function(){
+       // 将var关键字去掉，让autoplay变成全局变量：
+        		autoPlay = setInterval(function(){
+          		toNext()
+       			},3000) 
+       	// console.log("asdfggh")                
+       		} 
+       // 枚举小圆点：
+        for(var i = 0; i < dianlist.length;i++){
+          //绑定点击事件
+        	dianlist[i].onclick = function(){
+            	dianlist[n].className = "";
+            	n = Number(this.innerHTML)
+            	dianlist[n].className = "focus";
+            	ul.style.marginLeft=-(n*1000)+"px"
+        	}
+        }
+	</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+<!-- function toNext(){
+        n++;
+        if(n < liList.length){
+           var t = setInterval(function(){
+             //每次移动之前获取当前ul的marginLeft值
+             var ml = parseInt(ul.style.marginLeft);
+             if(ml !== -(n * 1000)){
+               //移动ul
+               ul.style.marginLeft = ml - sudu + "px"
+             }
+             else{
+               clearInterval(t)
+             }
+           },15)
+         }
+         else{
+           n = 0;
+           var t = setInterval(function(){
+             //每次移动之前获取当前ul的marginLeft值
+             var ml = parseInt(ul.style.marginLeft);
+             if(ml !== -(n * 1000)){
+               //移动ul
+               ul.style.marginLeft =0
+             else{
+               clearInterval(t)
+             }
+           },15)
+         }
+       }
+       next.onclick = function(){
+         toNext()
+       }
+       prev.onclick = function(){
+         n--;
+         if(n !== -1){
+           var t = setInterval(function(){
+             //每次移动之前获取当前ul的marginLeft值
+             var ml = parseInt(ul.style.marginLeft);
+             if(ml !== -(n * 1000)){
+               //移动ul
+               ul.style.marginLeft = ml + sudu + "px"
+             }
+             else{
+               clearInterval(t)
+             }
+           },15)
+         }
+         else{
+           n = liList.length - 1;
+           var t = setInterval(function(){
+             //每次移动之前获取当前ul的marginLeft值
+             var ml = parseInt(ul.style.marginLeft);
+             if(ml !== -(n * 1000)){
+               //移动ul
+               ul.style.marginLeft =-((liList.length - 1)*1000) + "px"
+             }
+             else{
+               clearInterval(t)
+             }
+           },15)
+         }
+       }
+       //自动播放
+       var autoPlay = setInterval(function(){
+         toNext();
+       },3000)
+      //智能判断
+     zhuti.onmouseenter = function(){
+        clearInterval(autoPlay);
+      }
+      zhuti.onmouseleave = function(){
+        var autoPlay = setInterval(function(){
+          toNext();
+        },3000)
+      } -->

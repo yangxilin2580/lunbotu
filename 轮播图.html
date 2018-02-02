@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{margin:0;padding:0;}
+		li{list-style:none;}
+	.zhuti{
+		width:1000px;
+		margin:0 auto;
+		margin-top:50px;
+		position:relative;
+	}
+	.zhuti li{
+		display:none;
+	}
+	.zhuti .show{
+		display:block;
+	}
+	#prev,#next{
+		position:absolute;
+		top:45%;
+		cursor:pointer;
+		transition:3s;
+		opacity:0.6;
+	}
+	#prev{
+		left:20px;
+	}
+	#next{
+		right:20px;
+	}
+	#prev:hover,#next:hover{
+		opacity:1;
+		transform:scale(1.1);
+	}
+	#dian{
+		position:absolute;
+		top:80%;
+		left:45%;
+	}
+	#dian .focus{
+		background-color:yellow;
+	}
+	#dian span{
+		display:inline-block;
+		height:16px;
+		width:16px;
+		border-radius:50%;
+		font-size:0;
+		cursor:pointer;
+		background-color:#fff;
+	}
+	</style>
+</head>
+<body>
+	<div class="zhuti">
+		<ul>
+			<li class="show"><img src="images/1.jpg" alt=""></li>
+			<li><img src="images/2.jpg" alt=""></li>
+			<li><img src="images/3.jpg" alt=""></li>
+			<li><img src="images/4.jpg" alt=""></li>
+			<li><img src="images/5.jpg" alt=""></li>
+			<li><img src="images/6.jpg" alt=""></li>
+		</ul>
+		<img  id="prev"src="images/l.png"alt="">
+		<img  id="next"src="images/r.png" alt="">
+			<div id="dian"><span class="focus">0</span>
+				<span>1</span>
+				<span>2</span>
+				<span>3</span>
+				<span>4</span>
+				<span>5</span>
+			</div>
+	</div>		
+		<script>
+		// 获取下一张图片的node节点
+			var next=document.getElementById('next')
+			var imglist=document.getElementsByTagName("li")
+			var dianlist=document.getElementsByTagName("span")
+			// n代表当前显示第几张：
+			var n=0;
+			next.onclick=function(){
+				if(n<imglist.length-1){
+					imglist[n].className=""
+					imglist[n+1].className="show"
+					dianlist[n].className=""
+					n++;
+				}
+				else{
+					imglist[n].className="";
+					imglist[0].className="show";
+					dianlist[n].className=""
+					n=0;
+				}
+				dianlist[n].className ="focus";
+        }
+        for(var i = 0; i < dianlist.length;i++){
+          //绑定点击事件
+          	dianlist[i].onclick = function(){
+            	imglist[n].className = "";
+            	//去掉小圆点背景色
+            	dianlist[n].className = "";
+            	n = Number(this.innerHTML)
+            	imglist[n].className = "show";
+            	dianlist[n].className = "focus";
+          	}
+        }
+        var prev=document.getElementById("prev")
+        var imglist=document.getElementsByTagName("li")
+		var dianlist=document.getElementsByTagName("span")
+		    var n=0;
+		    prev.onclick=function(){
+		    	if(n>imglist.length-6){
+		    		imglist[n].className=""
+		    		dianlist[n].className=""
+		    		imglist[n-1].className="show"
+		    		dianlist[n-1].className = "focus";
+		    		n--
+		    	}
+		    	else{imglist[n].className=""
+		    		dianlist[n].className=""
+		    		imglist[imglist.length-1].className="show"
+		    		dianlist[imglist.length-1].className = "focus";
+		    		n=imglist.length-1	
+		    	}
+		    }
+		</script>
+	
+</body>
+</html>
